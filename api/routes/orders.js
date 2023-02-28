@@ -7,19 +7,28 @@ const orderValidator = require("../validator/order_validator.js");
 
 router.use(express.json());
 
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    dbOrder.getOrders()
-      .then((orders) => {
-        if (orders.length == 0) {
-          res.status(404).json({ error: "No orders found" });
-        } else {
-          res.json(orders);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
+    let response = await dbOrder.getOrders();
+    if (response.length == 0) {
+      res.status(404).json({
+        type: "error",
+        error: 404,
+        message: "ressource non disponible : /orders/",
       });
+    } else {
+      let ordersSend = {
+        type: "collection",
+        orders: response,
+        links: [
+          {
+            rel: "self",
+            href: "/orders/",
+          },
+        ],
+      };
+      res.json(ordersSend);
+    }    
   } catch (err) {
     console.log(err);
   }
@@ -132,43 +141,6 @@ router.get("/:id/items", async (req, res) => {
     console.log(err);
   }
 });
-
-router.get("/:id", async (req, res) => {
-  let id = req.params.id;
-  
-  console.log(id);
-  try {
-    let response = await dbOrder.getOrder(id);
-    if (response.length == 0) {
-      res.status(404).json({
-        type: "error",
-        error: 404,
-        message: `ressource non disponible : /orders/${id}/`,
-      });
-    } else {
-      let order = response[0];
-      let items = await dbItem.getItems(id);
-      order.items = items;
-      let orderSend = {
-        type: "ressource",
-        order: order,
-        links: [
-          {
-            rel: "self",
-            href: `/orders/${id}/`,
-          },
-          {
-            rel: "items",
-            href: `/orders/${id}/items/`,
-          },
-        ],
-      };
-      res.json(orderSend);
-    }
-  } catch (err) {
-    console.log(err);
-  }
-})
 
 router.all("/", (req, res) => {
   res.status(405).json({
