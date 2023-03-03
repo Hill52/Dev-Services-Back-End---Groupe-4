@@ -1,0 +1,18 @@
+createOrder()
+  Type de requête : POST
+  URI : /orders
+  Corps de la requête : objet avec les attribut de la commande
+
+updateOrder(id):
+  Type de requête : PATCH
+  URI : /orders/{id}
+  Corps de la requête : objet avec les attribut de la commande
+
+payOrder(id,amount):
+  Type de requête : PUT
+  URI : /orders/{id}/{amount}
+
+statusOrder(id):
+  Type de requête : GET
+  URI : /orders/{id}
+  Retour : Etat de la requête (créée, payée, en préparation, prête, livrée)
