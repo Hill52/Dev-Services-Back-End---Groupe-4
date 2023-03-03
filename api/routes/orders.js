@@ -41,22 +41,28 @@ router.post("/", async (req, res, next) => {
     date: req.body.delivery.date,
     time: req.body.delivery.time,
   }
+  let items = req.body.items
 
   let order = {
     client_name: client_name,
     client_mail: client_mail,
     delivery: delivery,
+    items: items,
   };
 
   validator.validateOrderCreate(order, res, req, next);
 
   try {
     let response = await dbOrder.createOrder(order);
+
+    for (let i = 0; i < items.length; i++)
+      await dbItem.createItem(items[i], response.id);
+
     res.status(201).location(`/orders/${response.id}`).json({
       order: response,
     })
   } catch (err) {
-    console.log(err);
+    next(err);
   }
 })
 
@@ -90,7 +96,7 @@ router.get("/:id", async (req, res) => {
           ],
         };
       } else {
-        let items = await dbItem.getItems(id);
+        let items = await dbItem.getItem(id);
         response.items = items;
         orderSend = {
           type: "ressource",
@@ -107,7 +113,7 @@ router.get("/:id", async (req, res) => {
           ],
         };
       }
-      res.json(orderSend);
+      res.status(200).json(orderSend);
     }
   } catch (err) {
     console.log(err);
@@ -151,7 +157,7 @@ router.put("/:id", async (req, res, next) => {
 router.get("/:id/items", async (req, res) => {
   let id = req.params.id;
   try {
-    let response = await dbItem.getItems(id)
+    let response = await dbItem.getItem(id)
     if (response.length == 0) {
       res.status(404).json({
         type: "error",

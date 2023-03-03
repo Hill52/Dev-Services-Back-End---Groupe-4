@@ -12,7 +12,13 @@ const orderCreateSchema = joi.object({
     "delivery": joi.object({
         "date": joi.date().required(),
         "time": joi.string().required()
-    }).required()
+    }).required(),
+    "items": joi.array().items(joi.object({
+        "uri": joi.string().required(),
+        "q": joi.number().integer().min(1).required(),
+        "name": joi.string().required(),
+        "price": joi.number().min(0).required()
+    })).required()
 })
 
 function validateOrder(order, res, req, next) {

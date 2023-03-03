@@ -37,6 +37,11 @@ async function createOrder(order) {
     let livraison = new Date(order.delivery.date);
     livraison.setHours(order.delivery.time.split(":")[0]);
     livraison.setMinutes(order.delivery.time.split(":")[1]);
+    let total_amont = 0;
+    
+    order.items.forEach((item) => {
+      total_amont += item.price * item.q;
+    });
 
     await db("commande").insert({
       id: id,
@@ -44,14 +49,15 @@ async function createOrder(order) {
       mail: order.client_mail,
       livraison: livraison,
       created_at: new Date(),
-    });
+      montant: total_amont,
+    })
 
     let send = {
       client_name: order.client_name,
       client_mail: order.client_mail,
       delivery_date: order.delivery.date,
       id: id,
-      total_amont: 0,
+      total_amont: total_amont,
     }
 
     return send;
