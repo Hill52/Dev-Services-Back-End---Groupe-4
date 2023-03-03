@@ -1,47 +1,114 @@
 const express = require("express");
 const router = express.Router();
 
-const db = require("../db/order.js");
-const orderValidator = require("../validator/order_validator.js");
+const dbOrder = require("../db/order.js");
+const dbItem = require("../db/item.js");
+const validator = require("../validator/validator.js");
 
 router.use(express.json());
 
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    db.getOrders()
-      .then((orders) => {
-        if (orders.length == 0) {
-          res.status(404).json({ error: "No orders found" });
-        } else {
-          res.json(orders);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
+    let response = await dbOrder.getOrders();
+    if (response.length == 0) {
+      res.status(404).json({
+        type: "error",
+        error: 404,
+        message: "ressource non disponible : /orders/",
       });
+    } else {
+      let ordersSend = {
+        type: "collection",
+        orders: response,
+        links: [
+          {
+            rel: "self",
+            href: "/orders/",
+          },
+        ],
+      };
+      res.json(ordersSend);
+    }    
   } catch (err) {
     console.log(err);
   }
 });
 
-router.get("/:id", (req, res) => {
-  let id = req.params.id;
+router.post("/", async (req, res, next) => {
+  let client_name = req.body.client_name
+  let client_mail = req.body.client_mail
+  let delivery = {
+    date: req.body.delivery.date,
+    time: req.body.delivery.time,
+  }
+
+  let order = {
+    client_name: client_name,
+    client_mail: client_mail,
+    delivery: delivery,
+  };
+
+  validator.validateOrderCreate(order, res, req, next);
+
   try {
-    db.getOrder(id)
-      .then((order) => {
-        if (order.length == 0) {
-          res.status(404).json({
-            type: "error",
-            error: 404,
-            message: `ressource non disponible : /orders/${id}/`,
-          });
-        } else {
-          res.json(order);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
+    let response = await dbOrder.createOrder(order);
+    res.status(201).location(`/orders/${response.id}`).json({
+      order: response,
+    })
+  } catch (err) {
+    console.log(err);
+  }
+})
+
+router.get("/:id", async (req, res) => {
+  let id = req.params.id;
+  let embed = req.query.embed;
+
+  try {
+    let response = await dbOrder.getOrder(id);
+    if (response === undefined) {
+      res.status(404).json({
+        type: "error",
+        error: 404,
+        message: `ressource non disponible : /orders/${id}/`,
       });
+    } else {
+      let orderSend = {}
+      if (embed != "items") {
+        orderSend = {
+          type: "ressource",
+          order: response,
+          links: [
+            {
+              rel: "self",
+              href: `/orders/${response.id}/`,
+            },
+            {
+              rel: "items",
+              href: `/orders/${response.id}/items/`,
+            },  
+          ],
+        };
+      } else {
+        let items = await dbItem.getItems(id);
+        response.items = items;
+        orderSend = {
+          type: "ressource",
+          order: response,
+          links: [
+            {
+              rel: "self",
+              href: `/orders/${response.id}/`,
+            },
+            {
+              rel: "items",
+              href: `/orders/${response.id}/items/`,
+            },
+          ],
+        };
+      }
+      res.json(orderSend);
+    }
   } catch (err) {
     console.log(err);
   }
@@ -59,10 +126,10 @@ router.put("/:id", async (req, res, next) => {
     mail: mail,
   };
 
-  orderValidator.validateOrder(order, res, req, next);
+  validator.validateOrder(order, res, req, next);
 
   try {
-    let response = await db.updateOrder(id, nom, livraison, mail);
+    let response = await dbOrder.updateOrder(id, nom, livraison, mail);
     if (response === undefined) {
       res.status(404).json({
         type: "error",
@@ -78,6 +145,29 @@ router.put("/:id", async (req, res, next) => {
     }
   } catch (err) {
     next(500);
+  }
+});
+
+router.get("/:id/items", async (req, res) => {
+  let id = req.params.id;
+  try {
+    let response = await dbItem.getItems(id)
+    if (response.length == 0) {
+      res.status(404).json({
+        type: "error",
+        error: 404,
+        message: `ressource non disponible : /orders/${id}/items/`,
+      });
+    } else {
+      let itemsSend = {
+        type: "collection",
+        count: response.length,
+        items: response,
+      }
+      res.json(itemsSend);
+    }
+  } catch (err) {
+    console.log(err);
   }
 });
 

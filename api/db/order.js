@@ -1,4 +1,5 @@
 const knex = require("knex");
+const uuid = require("uuid").v4;
 
 let db = knex({
   client: "mysql",
@@ -15,7 +16,7 @@ function getOrders() {
 }
 
 function getOrder(id) {
-  return db("commande").select("*").where("id", id);
+  return db("commande").select("*").where("id", id).first();
 }
 
 async function updateOrder(id, nom, livraison, mail) {
@@ -30,8 +31,38 @@ async function updateOrder(id, nom, livraison, mail) {
   }
 }
 
+async function createOrder(order) {
+  try {
+    let id = uuid();
+    let livraison = new Date(order.delivery.date);
+    livraison.setHours(order.delivery.time.split(":")[0]);
+    livraison.setMinutes(order.delivery.time.split(":")[1]);
+
+    await db("commande").insert({
+      id: id,
+      nom: order.client_name,
+      mail: order.client_mail,
+      livraison: livraison,
+      created_at: new Date(),
+    });
+
+    let send = {
+      client_name: order.client_name,
+      client_mail: order.client_mail,
+      delivery_date: order.delivery.date,
+      id: id,
+      total_amont: 0,
+    }
+
+    return send;
+  } catch (err) {
+    console.log("erreur" + err);
+  }
+}
+
 module.exports = {
   getOrders,
   getOrder,
   updateOrder,
+  createOrder,
 };
