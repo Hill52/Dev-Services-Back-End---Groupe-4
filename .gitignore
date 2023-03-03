@@ -1,3 +1,6 @@
 .env
 api/node_modules/
 api/package-lock.json
+node_modules/
+db/
+```

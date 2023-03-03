@@ -1,0 +1,81 @@
+2. conception REST
+On souhaite construire une API RestFul pour un service de publication de petites annonces. Le modèle 
+conceptuel du service est présenté dans le schéma en annexe. 
+
+● lister les collections de ressources accessibles dans cette API 
+
+Annonces
+Catégories
+Régions
+Départements
+Photos
+
+● lister les URI pour l'ensemble des collections et pour les ressources de ces collections
+
+Annonces : /annonces
+Catégories : /categories
+Régions : /regions
+Départements : /departements
+Photos : /photos/{id_photo}
+
+Indiquer la requête ou la séquence de requêtes nécessaires pour réaliser les opérations suivantes : 
+
+
+    ● Lister les annonces 
+
+Type de requête : GET
+URI : /annonces
+Réponse : une liste de toutes les annonces
+
+    ● Lister les annonces du 54 
+
+Type de requête : GET
+URI : /departements/54/annonces
+Réponse : une liste de toutes les annonces appartenant au département ayant l'id 54
+
+    ● Lister les annonces de la catégorie 'voitures' 
+
+Type de requête : GET
+URI : /categories/voitures/annonces
+Réponse : une liste de toutes les annonces appartenant à la catégorie 'voitures'
+
+    ● Créer une catégorie 
+    
+Type de requête : POST
+URI : /categories
+Corps de la requête : un objet représentant les propriétés de la nouvelle catégorie à créer (nom, descr)
+Réponse : un objet représentant la nouvelle catégorie créée avec un identifiant unique
+
+    ● Modifier une annonce existante
+
+Type de requête : PUT
+URI : /annonces/{id_annonce}
+Corps de la requête : un objet représentant les propriétés de l'annonce à modifier (titre, date, texte, prix, nom_annonceur, main_annonceur, tel_annonceur, adr_annonceur)
+Réponse : un objet représentant l'annonce modifiée
+
+    ● Créer une annonce, l'associer à une catégorie et un département 
+
+Type de requête : POST
+URI : /annonces
+Corps de la requête : un objet représentant les propriétés de la nouvelle annonce à créer (titre, date, texte, prix, nom_annonceur, main_annonceur, tel_annonceur, adr_annonceur, id_categorie, id_departement)
+Réponse : un objet représentant la nouvelle annonce créée avec un identifiant unique
+
+    ● Modifier la catégorie d'une annonce, 
+
+Type de requête : PUT
+URI : /annonces/{id_annonce}/categorie
+Corps de la requête : un objet représentant la nouvelle catégorie à associer à l'annonce (id_categorie)
+Réponse : un objet représentant l'annonce modifiée avec sa nouvelle catégorie
+
+    ● Ajouter une image à une annonce 
+
+Type de requête : POST
+URI : /annonces/{id_annonce}/photos
+Corps de la requête : un objet représentant les propriétés de la nouvelle photo à associer à l'annonce (file, date, taille_octet)
+Réponse : un objet représentant la nouvelle photo créée avec un identifiant unique
+
+    ● Supprimer une annonce et toutes les images associée
+
+Type de requête : DELETE
+URI : /annonces/{id_annonce}
+Réponse : un objet représentant l'annonce supprimée, avec une liste de toutes les photos associées qui ont également été supprimées
