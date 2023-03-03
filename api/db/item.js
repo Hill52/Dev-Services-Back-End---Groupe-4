@@ -10,10 +10,27 @@ let db = knex({
     },
 });
 
-function getItems(id) {
+function getItems() {
+    return db("item").select("*");
+}
+
+function getItem(id) {
     return db("item").select("*").where("command_id", id);
 }
 
+function createItem(item, commandId) {
+    console.log(item);
+    return db("item").insert({
+        uri: item.uri,
+        libelle: item.name,
+        quantite: item.q,
+        tarif: item.price,
+        command_id: commandId,
+    });
+}
+
 module.exports = {
-    getItems,
+    getItem: getItem,
+    getItems: getItems,
+    createItem: createItem,
 };
