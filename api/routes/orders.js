@@ -48,6 +48,7 @@ router.get("/", async (req, res, next) => {
       });
     } else {
       if (page === undefined) page = 0;
+      else page = page - 1;
 
       let nbPages = Math.ceil(response.length / 10);
       if (page > nbPages - 1) page = nbPages - 1;
