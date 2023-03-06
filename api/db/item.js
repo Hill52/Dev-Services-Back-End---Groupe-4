@@ -19,7 +19,6 @@ function getItem(id) {
 }
 
 function createItem(item, commandId) {
-    console.log(item);
     return db("item").insert({
         uri: item.uri,
         libelle: item.name,

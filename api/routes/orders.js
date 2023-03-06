@@ -7,9 +7,39 @@ const validator = require("../validator/validator.js");
 
 router.use(express.json());
 
-router.get("/", async (req, res) => {
+router.get("/", async (req, res, next) => {
+  let client_name = req.query.c
+  let sort = req.query.sort
+  let page = req.query.page
+
   try {
-    let response = await dbOrder.getOrders();
+    if (client_name !== undefined) {
+      validator.validateMail({mail: client_name}, res, req, next);
+      if (res.statusCode == 400) return;
+    }
+    if (sort !== undefined) {
+      if (sort != "created" && sort != "shipped" && sort != "amount") {
+        res.status(400).json({
+          type: "error",
+          error: 400,
+          message: "La valeur de sort doit être created, shipped ou amount",
+        });
+        return;
+      }
+    }
+    if (page !== undefined) {
+      if (isNaN(page)) {
+        res.status(400).json({
+          type: "error",
+          error: 400,
+          message: "La valeur de page doit être un nombre",
+        });
+        return;
+      }
+    }
+
+    let response = await dbOrder.getOrders(client_name, sort);
+
     if (response.length == 0) {
       res.status(404).json({
         type: "error",
@@ -17,17 +47,58 @@ router.get("/", async (req, res) => {
         message: "ressource non disponible : /orders/",
       });
     } else {
+      if (page === undefined) page = 0;
+
+      let nbPages = Math.ceil(response.length / 10);
+      if (page > nbPages - 1) page = nbPages - 1;
+      if (page < 0) page = 0;
+
+      response = response.slice(page * 10, page * 10 + 10);
+      
       let ordersSend = {
         type: "collection",
-        orders: response,
-        links: [
-          {
-            rel: "self",
-            href: "/orders/",
+        count: response.length,
+        size: 10,
+        links: {
+          next: {
+            href: `/orders/?page=${page + 2}`,
           },
-        ],
-      };
-      res.json(ordersSend);
+          prev: {
+            href: `/orders/?page=${page}`,
+          },
+          last: {
+            href: `/orders/?page=${nbPages}`,
+          },
+          first: {
+            href: `/orders/?page=1`,
+          }
+        },
+        orders: [],
+      }
+
+      response.forEach((order) => {
+        ordersSend.orders.push(
+          {
+            order: {
+              "id": order.id,
+              "client_name": order.nom,
+              "order_date": order.created_at,
+              "delivery_date": order.livraison,
+              "status": order.status,
+            },
+            links: {
+              self: {
+                href: `/orders/${order.id}/`,
+              },
+            }
+          }
+        );
+      });
+      
+      res.set("X-Total-Pages", nbPages);
+      res.set("X-Current-Page", page + 1);
+      res.set("X-Per-Page", 10);
+      res.status(200).json(ordersSend);
     }    
   } catch (err) {
     console.log(err);
