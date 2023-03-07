@@ -1,5 +1,6 @@
 import 'dart:html';
 
+import 'package:elephant_app/screens/tasks_master.dart';
 import 'package:flutter/material.dart';
 
 class Elephant_App extends StatefulWidget {
@@ -11,15 +12,13 @@ class _Elephant_AppState extends State<Elephant_App> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Elephant App',
       home: Scaffold(
         appBar: AppBar(
           title: Text('Elephant'),
         ),
-        body: Container(
-          // ici, vous pouvez définir le contenu de votre application
-          child: Text('Hello, Elephant!'),
-        ),
+        body: TasksMaster(),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             print("ok");
