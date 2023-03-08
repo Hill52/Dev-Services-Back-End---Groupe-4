@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:faker/faker.dart';
 import 'package:elephant_app/models/task.dart';
 import 'package:elephant_app/screens/tasks_preview.dart';
+import 'package:elephant_app/screens/tasks_details.dart';
 
 class TasksMaster extends StatefulWidget {
   @override
@@ -23,8 +24,7 @@ class _TasksMasterState extends State<TasksMaster> {
       list.add(Task(
           content: Faker().lorem.sentence(),
           completed: Faker().randomGenerator.boolean(),
-          title: Faker().lorem.sentence()
-      ));
+          title: Faker().lorem.sentence()));
     }
     list[2].title = "hello";
     return list;
@@ -41,7 +41,17 @@ class _TasksMasterState extends State<TasksMaster> {
             itemCount: tasks.length,
             itemBuilder: (BuildContext context, int index) {
               Task task = tasks[index];
-              return TaskPreview(task: task);
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TaskDetails(task: task),
+                    ),
+                  );
+                },
+                child: TaskPreview(task: task),
+              );
             },
           );
         } else if (snapshot.hasError) {
