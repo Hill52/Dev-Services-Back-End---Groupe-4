@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:faker/faker.dart';
 import 'package:elephant_app/models/task.dart';
+import 'package:elephant_app/screens/tasks_preview.dart';
 
 class TasksMaster extends StatefulWidget {
   @override
@@ -9,7 +10,7 @@ class TasksMaster extends StatefulWidget {
 
 class _TasksMasterState extends State<TasksMaster> {
   late Future<List<Task>> _futureTasks;
-  
+
   @override
   void initState() {
     super.initState();
@@ -23,12 +24,13 @@ class _TasksMasterState extends State<TasksMaster> {
           content: Faker().lorem.sentence(),
           completed: Faker().randomGenerator.boolean(),
           title: Faker().lorem.sentence()
-          ));
+      ));
     }
     list[2].title = "hello";
     return list;
   }
 
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Task>>(
       future: _futureTasks,
@@ -39,18 +41,7 @@ class _TasksMasterState extends State<TasksMaster> {
             itemCount: tasks.length,
             itemBuilder: (BuildContext context, int index) {
               Task task = tasks[index];
-              return ListTile(
-                title: Text(task.title ?? "No title"),
-                subtitle: Text(task.content),
-                trailing: Checkbox(
-                  value: task.completed,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      task.completed = value!;
-                    });
-                  },
-                ),
-              );
+              return TaskPreview(task: task);
             },
           );
         } else if (snapshot.hasError) {
