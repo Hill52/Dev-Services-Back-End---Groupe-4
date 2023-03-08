@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:faker/faker.dart';
 import 'package:elephant_app/models/task.dart';
-import 'package:elephant_app/screens/tasks_preview.dart';
-import 'package:elephant_app/screens/tasks_details.dart';
+import 'package:elephant_app/screens/task_preview.dart';
+import 'package:elephant_app/screens/task_details.dart';
 
 class TasksMaster extends StatefulWidget {
   @override

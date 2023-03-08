@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:elephant_app/models/task.dart';
-import 'package:elephant_app/screens/tasks_master.dart';
+import 'package:elephant_app/screens/task_master.dart';
 
 class TaskDetails extends StatefulWidget {
   final Task task;
