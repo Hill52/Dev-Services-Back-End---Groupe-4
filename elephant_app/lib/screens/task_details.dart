@@ -54,15 +54,6 @@ class _TaskDetailsState extends State<TaskDetails> {
                   keyboardType: TextInputType.multiline,
                 ),
                 SizedBox(height: 16.0),
-                CheckboxListTile(
-                  title: Text('Completed'),
-                  value: widget.task.completed,
-                  onChanged: (newValue) {
-                    setState(() {
-                      widget.task.completed = newValue ?? false;
-                    });
-                  },
-                ),
               ],
             ),
           ),

@@ -20,14 +20,7 @@ class _Elephant_AppState extends State<Elephant_App> {
           title: Text('Elephant'),
         ),
         body: TasksMaster(),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            print("ok");
-            // ici, vous pouvez définir ce qui se passe lorsque vous appuyez sur le bouton
-          },
-          tooltip: 'Ajouter un éléphant',
-          child: Icon(Icons.add),
-        )
+
       ),
     );
   }
