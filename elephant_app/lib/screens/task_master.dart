@@ -14,33 +14,6 @@ class TasksMaster extends StatefulWidget {
 
 class _TasksMasterState extends State<TasksMaster> {
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _fetchTasks();
-  // }
-
-  // void _fetchTasks() {
-  //   List<Task> list = [];
-  //   for (int i = 0; i <= 10; i++) {
-  //     list.add(Task(
-  //       content: Faker().lorem.sentence(),
-  //       completed: Faker().randomGenerator.boolean(),
-  //       title: Faker().lorem.sentence(),
-  //     ));
-  //   }
-  //   list[2].title = "hello";
-  //   setState(() {
-  //     _tasks = list;
-  //   });
-  // }
-
-  // void _addTask(Task task) {
-  //   setState(() {
-  //     _tasks.add(task);
-  //   });
-  // }
-
   void _navigateToTaskForm(BuildContext context) async {
     final result = await Navigator.push(
       context,
@@ -61,46 +34,46 @@ class _TasksMasterState extends State<TasksMaster> {
   Widget build(BuildContext context) {
     
     return Scaffold(
-      // body: FutureBuilder(
-      //   future: Provider.of<TasksProvider>(context, listen: false).fetchTasks(),
-      //   builder: (BuildContext context, AsyncSnapshot<List<Task>> snapshot) {
-      //     print("hi");
-      //     if (snapshot.hasData) {
-      //       print("hi2");
-      //       // List tasks = Provider.of<TasksProvider>(context, listen: false).tasks;
-      //       List tasks = snapshot.data!;
-      //       return Padding(
-      //         padding: const EdgeInsets.only(bottom: 80.0),
-      //         child: ListView.builder(
-      //           itemCount: tasks == null ? 0 : tasks.length,
-      //           itemBuilder: (BuildContext context, int index) {
-      //             Task task = tasks[index];
-      //             return TaskPreview(task: task);
-      //           },
-      //         ),
-      //       );
-      //     } else {
-      //       return Center(
-      //         child: CircularProgressIndicator(),
-      //       );
-      //     }
-      //   },
-      // ),
-      body: Consumer<TasksProvider>(
-        builder: (context, tasksProvider, child) {
-          List tasks = tasksProvider.tasks;
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 80.0),
-            child: ListView.builder(
-              itemCount: tasks == null ? 0 : tasks.length,
-              itemBuilder: (BuildContext context, int index) {
-                Task task = tasks[index];
-                return TaskPreview(task: task);
-              },
-            ),
-          );
+      body: FutureBuilder(
+        future: Provider.of<TasksProvider>(context, listen: false).fetchTasks(),
+        builder: (BuildContext context, AsyncSnapshot<List<Task>> snapshot) {
+          print("hi");
+          if (snapshot.hasData) {
+            print("hi2");
+            // List tasks = Provider.of<TasksProvider>(context, listen: false).tasks;
+            List tasks = snapshot.data!;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 80.0),
+              child: ListView.builder(
+                itemCount: tasks == null ? 0 : tasks.length,
+                itemBuilder: (BuildContext context, int index) {
+                  Task task = tasks[index];
+                  return TaskPreview(task: task);
+                },
+              ),
+            );
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
         },
       ),
+      // body: Consumer<TasksProvider>(
+      //   builder: (context, tasksProvider, child) {
+      //     List tasks = tasksProvider.tasks;
+      //     return Padding(
+      //       padding: const EdgeInsets.only(bottom: 80.0),
+      //       child: ListView.builder(
+      //         itemCount: tasks == null ? 0 : tasks.length,
+      //         itemBuilder: (BuildContext context, int index) {
+      //           Task task = tasks[index];
+      //           return TaskPreview(task: task);
+      //         },
+      //       ),
+      //     );
+      //   },
+      // ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 50.0),
         child: FloatingActionButton(
