@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:elephant_app/screens/task_form.dart';
 
 class Elephant_App extends StatefulWidget {
+  const Elephant_App({Key? key}) : super(key: key);
   @override
   _Elephant_AppState createState() => _Elephant_AppState();
 }

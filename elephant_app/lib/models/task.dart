@@ -8,4 +8,9 @@ class Task {
   void toggleCompleted() {
     completed = !completed;
   }
+
+  @override
+  toString() {
+    return "Task {id: $id, title: $title, content: $content, completed: $completed}";
+  }
 }

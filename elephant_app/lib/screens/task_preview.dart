@@ -23,23 +23,19 @@ class _TaskPreviewState extends State<TaskPreview> {
   @override
   Widget build(BuildContext context) {
     Color tileColor = widget.task.completed ? Colors.green : Colors.red;
-    return GestureDetector(
-      onTap: () {
-        _navigateToTaskDetails(context);
-      },
-      child: ListTile(
-        title: Text(widget.task.title ?? "No title"),
-        subtitle: Text(widget.task.content),
-        trailing: Checkbox(
-          value: widget.task.completed,
-          onChanged: (bool? value) {
-            setState(() {
-              widget.task.toggleCompleted();
-            });
-          },
-        ),
-        tileColor: tileColor,
+    return ListTile(
+      title: Text(widget.task.title ?? "No title"),
+      subtitle: Text(widget.task.content),
+      trailing: Checkbox(
+        value: widget.task.completed,
+        onChanged: (bool? value) {
+          setState(() {
+            widget.task.toggleCompleted();
+          });
+        },
       ),
+      tileColor: tileColor,
+      onTap: () => _navigateToTaskDetails(context),
     );
   }
 }

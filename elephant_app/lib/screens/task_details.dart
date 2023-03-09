@@ -1,6 +1,8 @@
+import 'package:elephant_app/providers/tasks_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:elephant_app/models/task.dart';
 import 'package:elephant_app/screens/task_master.dart';
+import 'package:provider/provider.dart';
 
 class TaskDetails extends StatefulWidget {
   final Task task;
@@ -14,6 +16,8 @@ class TaskDetails extends StatefulWidget {
 class _TaskDetailsState extends State<TaskDetails> {
   late TextEditingController _titleController;
   late TextEditingController _contentController;
+
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -36,6 +40,7 @@ class _TaskDetailsState extends State<TaskDetails> {
         title: Text('Task Details'),
       ),
       body: Form(
+        key: _formKey,
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -45,6 +50,15 @@ class _TaskDetailsState extends State<TaskDetails> {
                 TextFormField(
                   controller: _titleController,
                   decoration: InputDecoration(labelText: 'Title'),
+                  onSaved: (value) {
+                    widget.task.title = value!;
+                  },
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter a title';
+                    }
+                    return null;
+                  },
                 ),
                 SizedBox(height: 16.0),
                 TextFormField(
@@ -52,8 +66,33 @@ class _TaskDetailsState extends State<TaskDetails> {
                   decoration: InputDecoration(labelText: 'Content'),
                   maxLines: null,
                   keyboardType: TextInputType.multiline,
+                  onSaved: (value) {
+                    widget.task.content = value!;
+                  },
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter some content';
+                    }
+                    return null;
+                  },
                 ),
                 SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: () {
+                    // widget.task.title = _titleController.text;
+                    // widget.task.content = _contentController.text;
+                    if (_formKey.currentState!.validate()) {
+                      _formKey.currentState!.save();
+
+                      Provider.of<TasksProvider>(context, listen: false)
+                          .updateTask(widget.task);
+
+                      Navigator.pop(context);
+
+                    }
+                  },
+                  child: Text('Save'),
+                ),
               ],
             ),
           ),

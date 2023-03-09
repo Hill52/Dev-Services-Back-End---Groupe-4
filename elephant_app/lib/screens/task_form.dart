@@ -1,10 +1,15 @@
+import 'dart:js_util';
+
+import 'package:elephant_app/providers/tasks_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:elephant_app/models/task.dart';
+import 'package:provider/provider.dart';
 
 class TaskForm extends StatefulWidget {
-  final Function addTask;
+  // final Function addTask;
 
-  TaskForm({required this.addTask});
+  // TaskForm({required this.addTask});
+
 
   @override
   _TaskFormState createState() => _TaskFormState();
@@ -23,7 +28,8 @@ class _TaskFormState extends State<TaskForm> {
         content: _contentController.text,
         completed: false,
       );
-      widget.addTask(task);
+      context.read<TasksProvider>().addTask(task);
+      // widget.addTask(task);
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Nouvelle tâche ajoutée!'),
