@@ -35,8 +35,8 @@ class TasksProvider extends ChangeNotifier {
       _tasks.add(
           newTask); // mettre à jour la liste _tasks en mémoire avec la nouvelle tâche
       print("Success");
+      notifyListeners();
     }
-    notifyListeners();
   }
 
   Future<void> updateTask(Task task) async {}
