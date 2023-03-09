@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:elephant_app/models/task.dart';
 import 'package:faker/faker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 final supabase = Supabase.instance.client;
 
@@ -25,12 +26,14 @@ class TasksProvider extends ChangeNotifier {
   }
 
   Future<void> addTask(Task task) async {
-
-    final reponse = await supabase.from("tasks").insert(task.toJson()).execute();
-    if (reponse.status != 201) {
+    final newTask = task.copyWith(id: const Uuid().v4()); // generate random id
+    final response =
+        await supabase.from("tasks").insert(newTask.toJson()).execute();
+    if (response.status != 201) {
       print("Error");
     } else {
-      _tasks.add(task);
+      _tasks.add(
+          newTask); // mettre à jour la liste _tasks en mémoire avec la nouvelle tâche
       print("Success");
     }
     notifyListeners();
@@ -44,3 +47,66 @@ class TasksProvider extends ChangeNotifier {
 
   Future<void> uncompleteTask(String id) async {}
 }
+
+
+
+/**
+Future<void> addTask(Task task) async {
+  final response = await supabase.from("tasks").insert(task.toJson());
+  if (response.error != null) {
+    throw response.error!.message;
+  } else {
+    _tasks.add(task);
+    notifyListeners();
+  }
+}
+
+Future<void> updateTask(Task task) async {
+  final response =
+      await supabase.from("tasks").update(task.toJson()).match({'id': task.id}).single();
+  if (response.error != null) {
+    throw response.error!.message;
+  } else {
+    final index = _tasks.indexWhere((t) => t.id == task.id);
+    _tasks[index] = task;
+    notifyListeners();
+  }
+}
+
+Future<void> deleteTask(String id) async {
+  final response = await supabase.from("tasks").delete().match({'id': id}).single();
+  if (response.error != null) {
+    throw response.error!.message;
+  } else {
+    _tasks.removeWhere((t) => t.id == id);
+    notifyListeners();
+  }
+}
+
+Future<void> completeTask(String id) async {
+  final response = await supabase
+      .from("tasks")
+      .update({'completed': true}).match({'id': id}).single();
+  if (response.error != null) {
+    throw response.error!.message;
+  } else {
+    final index = _tasks.indexWhere((t) => t.id == id);
+    _tasks[index].completed = true;
+    notifyListeners();
+  }
+}
+
+Future<void> uncompleteTask(String id) async {
+  final response = await supabase
+      .from("tasks")
+      .update({'completed': false}).match({'id': id}).single();
+  if (response.error != null) {
+    throw response.error!.message;
+  } else {
+    final index = _tasks.indexWhere((t) => t.id == id);
+    _tasks[index].completed = false;
+    notifyListeners();
+  }
+}
+
+ */
