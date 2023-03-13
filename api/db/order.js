@@ -11,8 +11,22 @@ let db = knex({
   },
 });
 
-function getOrders() {
-  return db("commande").select("*");
+function getOrders(client = null, sort = null) {
+  if (sort) {
+    if (sort == "created") {
+      sort = "created_at";
+    } else if (sort == "shipped") {
+      sort = "livraison";
+    } else if (sort == "amount") {
+      sort = "montant";
+    }
+  }
+
+  if (client) {
+    return (sort) ? db("commande").select("id", "nom", "created_at", "livraison", "status").where("mail", client).orderBy(sort, "desc") : db("commande").select("id", "nom", "created_at", "livraison", "status").where("mail", client);
+  } else {
+    return (sort) ? db("commande").select("id", "nom", "created_at", "livraison", "status").orderBy(sort, "desc") : db("commande").select("id", "nom", "created_at", "livraison", "status");
+  }
 }
 
 function getOrder(id) {

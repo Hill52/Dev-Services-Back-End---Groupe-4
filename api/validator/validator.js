@@ -21,6 +21,10 @@ const orderCreateSchema = joi.object({
     })).required()
 })
 
+const mailSchema = joi.object({
+    "mail": joi.string().email().required()
+})
+
 function validateOrder(order, res, req, next) {
     const result = orderSchema.validate(order);
     if (result.error) {
@@ -44,7 +48,19 @@ function validateOrderCreate(order, res, req, next) {
     }
 }
 
+function validateMail(mail, res, req, next) {
+    const result = mailSchema.validate(mail);
+    if (result.error) {
+        res.status(400).json({
+            type: "error",
+            error: 400,
+            message: result.error.details[0].message
+        });
+    }
+}
+
 module.exports = {
     validateOrder,
-    validateOrderCreate
+    validateOrderCreate,
+    validateMail,
 }
