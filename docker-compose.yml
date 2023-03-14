@@ -24,6 +24,29 @@ services:
       mariadb:
         condition: service_healthy #vérifie que le serveur de base de données est prêt et fonctionnel
 
+  auth:
+    image: node:alpine
+    # command: npm start #production
+    command: npm run watch
+    #command: npm run watch #pour le dévellopement seulement (fonctionne uniquement si Nodemon est installé)
+    #command: npm test
+    env_file:
+      #définit l'emplacement du fichier de variables d'environnement
+      - .env
+    working_dir: /usr/src/app
+    ports:
+      - 3000:3000 #associe le port local 3333 au port 3000 du container
+    volumes:
+      - ./auth:/usr/src/app #synchronise le répertoire local ./api avec le répertoire du container /usr/src/app
+    networks:
+      - some_network
+    links:
+      - mariadb #facilite l'accès à la base de données via le network
+    depends_on:
+      #permet d'organiser le démarrage des services
+      mariadb:
+        condition: service_healthy #vérifie que le serveur de base de données est prêt et fonctionnel
+
   mariadb:
     image: mariadb
     env_file:
@@ -34,6 +57,34 @@ services:
       - ./db/sql:/docker-entrypoint-initdb.d #initialise la base de données à l'aide des fichiers SQL présents dans le volume local ./db/sql
     ports:
       - 3306:3306 #associe le port local 3306 au port 3306 du container
+    networks:
+      - some_network
+    healthcheck:
+      #vérifie le fonctionnement du service
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-uroot",
+          "-p${MARIADB_ROOT_PASSWORD}"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  dbauth:
+    image: mariadb
+    env_file:
+      #définit l'emplacement du fichier de variables d'environnement
+      - dbauth.env
+    volumes:
+      - ./db/auth_data:/var/lib/mysql #synchronise le répertoire local ./db/data avec le répertoire du container /var/lib/mysql
+      - ./db/auth_sql:/docker-entrypoint-initdb.d #initialise la base de données à l'aide des fichiers SQL présents dans le volume local ./db/sql
+    ports:
+      - 3307:3306 #associe le port local 3306 au port 3306 du container
     networks:
       - some_network
     healthcheck:
