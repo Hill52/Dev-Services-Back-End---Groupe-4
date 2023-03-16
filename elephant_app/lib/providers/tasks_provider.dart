@@ -49,6 +49,7 @@ class TasksProvider extends ChangeNotifier {
     } else {
       final index = _tasks.indexWhere((t) => t.id == task.id);
       _tasks[index] = task; // Mettre à jour l'état local de la tâche
+      
       notifyListeners();
     }
   }
