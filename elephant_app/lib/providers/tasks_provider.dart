@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:elephant_app/models/task.dart';
-import 'package:faker/faker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
@@ -39,7 +38,20 @@ class TasksProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> updateTask(Task task) async {}
+  Future<void> updateTask(Task task) async {
+    final response = await supabase
+        .from("tasks")
+        .update(task.toJson())
+        .match({'id': task.id}).execute(); // Ajouter cette ligne
+    if (response.status != 204) {
+      print("Error MECCC PROVIDER");
+      print(response.status);
+    } else {
+      final index = _tasks.indexWhere((t) => t.id == task.id);
+      _tasks[index] = task; // Mettre à jour l'état local de la tâche
+      notifyListeners();
+    }
+  }
 
   Future<void> deleteTask(String id) async {}
 

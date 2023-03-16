@@ -7,18 +7,17 @@ import 'package:elephant_app/providers/tasks_provider.dart';
 import 'package:provider/provider.dart';
 
 class TasksMaster extends StatefulWidget {
-  const TasksMaster({super.key});
+  const TasksMaster({Key? key});
   @override
   _TasksMasterState createState() => _TasksMasterState();
 }
 
 class _TasksMasterState extends State<TasksMaster> {
-
-  void _navigateToTaskForm(BuildContext context) async {
+  Future<void> _navigateToTaskForm(BuildContext context) async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => TaskForm()),
-      // MaterialPageRoute(builder: (context) => TaskForm(addTask: _addTask)),
+// MaterialPageRoute(builder: (context) => TaskForm(addTask: _addTask)),
     );
     if (result != null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -30,115 +29,37 @@ class _TasksMasterState extends State<TasksMaster> {
     }
   }
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    body: Consumer<TasksProvider>(
-      builder: (context, tasksProvider, child) {
-        List<Task> tasks = tasksProvider.tasks;
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 80.0),
-          child: ListView.builder(
-            itemCount: tasks.length,
-            itemBuilder: (BuildContext context, int index) {
-              Task task = tasks[index];
-              return TaskPreview(task: task);
-            },
-          ),
-        );
-      },
-    ),
-    floatingActionButton: Padding(
-      padding: const EdgeInsets.only(bottom: 50.0),
-      child: FloatingActionButton(
-        onPressed: () {
-          _navigateToTaskForm(context);
-        },
-        child: Icon(Icons.add),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: FutureProvider<List<Task>>(
+        create: (_) => TasksProvider().fetchTasks(),
+        initialData: [],
+        child: Consumer<List<Task>>(
+          builder: (context, tasks, child) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 80.0),
+              child: ListView.builder(
+                itemCount: tasks.length,
+                itemBuilder: (BuildContext context, int index) {
+                  Task task = tasks[index];
+                  return TaskPreview(task: task);
+                },
+              ),
+            );
+          },
+        ),
       ),
-    ),
-    floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-  );
-}
-
-  // @override
-  // Widget build(BuildContext context) {
-    
-  //   return Scaffold(
-  //     body: FutureBuilder(
-  //       future: Provider.of<TasksProvider>(context, listen: false).fetchTasks(),
-  //       builder: (BuildContext context, AsyncSnapshot<List<Task>> snapshot) {
-  //         print("hi");
-  //         if (snapshot.hasData) {
-  //           print("hi2");
-  //           List tasks = Provider.of<TasksProvider>(context, listen: false).tasks;
-  //           // List tasks = snapshot.data!;
-  //           return Padding(
-  //             padding: const EdgeInsets.only(bottom: 80.0),
-  //             child: ListView.builder(
-  //               itemCount: tasks == null ? 0 : tasks.length,
-  //               itemBuilder: (BuildContext context, int index) {
-  //                 Task task = tasks[index];
-  //                 return TaskPreview(task: task);
-  //               },
-  //             ),
-  //           );
-  //         } else {
-  //           return Center(
-  //             child: CircularProgressIndicator(),
-  //           );
-  //         }
-  //       },
-  //     ),
-
-      
-  //     // body: Consumer<TasksProvider>(
-  //     //   builder: (context, tasksProvider, child) {
-  //     //     List tasks = tasksProvider.tasks;
-  //     //     return Padding(
-  //     //       padding: const EdgeInsets.only(bottom: 80.0),
-  //     //       child: ListView.builder(
-  //     //         itemCount: tasks == null ? 0 : tasks.length,
-  //     //         itemBuilder: (BuildContext context, int index) {
-  //     //           Task task = tasks[index];
-  //     //           return TaskPreview(task: task);
-  //     //         },
-  //     //       ),
-  //     //     );
-  //     //   },
-  //     // ),
-  //     floatingActionButton: Padding(
-  //       padding: const EdgeInsets.only(bottom: 50.0),
-  //       child: FloatingActionButton(
-  //         onPressed: () {
-  //           _navigateToTaskForm(context);
-  //         },
-  //         child: Icon(Icons.add),
-  //       ),
-  //     ),
-  //     floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-  //   );
-  //   // Scaffold(
-  //   //   body: Padding(
-  //   //     padding: const EdgeInsets.only(bottom: 80.0),
-  //   //     child: ListView.builder(
-  //   //       itemCount: _tasks == null ? 0 : _tasks.length,
-  //   //       itemBuilder: (BuildContext context, int index) {
-  //   //         Task task = _tasks[index];
-  //   //         return TaskPreview(task: task);
-  //   //       },
-  //   //     ),
-  //   //   ),
-  //   //   floatingActionButton: Padding(
-  //   //     padding: const EdgeInsets.only(bottom: 50.0),
-  //   //     child: FloatingActionButton(
-  //   //       onPressed: () {
-  //   //         _navigateToTaskForm(context);
-  //   //       },
-  //   //       child: Icon(Icons.add),
-  //   //     ),
-  //   //   ),
-  //   //   floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-  //   // );
-  // }
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 50.0),
+        child: FloatingActionButton(
+          onPressed: () {
+            _navigateToTaskForm(context);
+          },
+          child: Icon(Icons.add),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
 }

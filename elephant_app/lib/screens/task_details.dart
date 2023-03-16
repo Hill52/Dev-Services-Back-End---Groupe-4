@@ -35,6 +35,8 @@ class _TaskDetailsState extends State<TaskDetails> {
 
   @override
   Widget build(BuildContext context) {
+return Consumer<TasksProvider>(
+  builder: (context, provider, _) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Task Details'),
@@ -79,16 +81,10 @@ class _TaskDetailsState extends State<TaskDetails> {
                 SizedBox(height: 16.0),
                 ElevatedButton(
                   onPressed: () {
-                    // widget.task.title = _titleController.text;
-                    // widget.task.content = _contentController.text;
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
-
-                      Provider.of<TasksProvider>(context, listen: false)
-                          .updateTask(widget.task);
-
+                      provider.updateTask(widget.task);
                       Navigator.pop(context);
-
                     }
                   },
                   child: Text('Save'),
@@ -99,5 +95,8 @@ class _TaskDetailsState extends State<TaskDetails> {
         ),
       ),
     );
+  },
+);
+
   }
 }
