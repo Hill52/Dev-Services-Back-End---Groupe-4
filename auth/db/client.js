@@ -50,6 +50,10 @@ async function createClient(client) {
     }
 }
 
+function getUser(id) {
+    return db("client").select('mail_client', 'nom_client', 'cumul_achats').where("id", id);
+}
+
 function getClientByToken(token) {
     // tranform token to id
     // return db("client").select("*").where("id", token);
@@ -84,6 +88,7 @@ async function authentification(login, password) {
 module.exports = {
     createClient,
     getClientByToken,
+    getUser,
     authentification,
     getClientByMail,
 };
