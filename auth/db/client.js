@@ -7,14 +7,10 @@ const randToken = require("rand-token");
 let db = knex({
     client: "mysql",
     connection: {
-        // host: process.env.DB_HOST,
-        // user: process.env.MARIADB_USER,
-        // password: process.env.MARIADB_PASSWORD,
-        // database: process.env.MARIADB_DATABASE,
-        host: "dbauth",
-        user: "dbauth",
-        password: "dbauth",
-        database: "dbauth",
+        host: process.env.DB_HOST,
+        user: process.env.MARIADB_USER,
+        password: process.env.MARIADB_PASSWORD,
+        database: process.env.MARIADB_DATABASE,
     },
 });
 
@@ -54,13 +50,6 @@ function getUser(id) {
     return db("client").select('mail_client', 'nom_client', 'cumul_achats').where("id", id);
 }
 
-function getClientByToken(token) {
-    // tranform token to id
-    // return db("client").select("*").where("id", token);
-
-    // console.log("token: " + token);
-}
-
 async function authentification(login, password) {
     let result = await db("client").select("*").where("nom_client", login);
 
@@ -87,7 +76,6 @@ async function authentification(login, password) {
 
 module.exports = {
     createClient,
-    getClientByToken,
     getUser,
     authentification,
     getClientByMail,
