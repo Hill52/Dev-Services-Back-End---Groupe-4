@@ -12,9 +12,9 @@ router.use(express.json());
 
 router.post("/", async (req, res, next) => {
     let mail = req.body.mail;
-    let client_mail = req.body.client_mail;
+    let client_name = req.body.client_name;
 
-    if (mail == undefined || client_mail == undefined || req.body.password == undefined || req.body.passwordConfirm == undefined) {
+    if (mail == undefined || client_name == undefined || req.body.password == undefined || req.body.passwordConfirm == undefined) {
         res.status(400).json({
             type: "error",
             error: 400,
@@ -32,39 +32,45 @@ router.post("/", async (req, res, next) => {
         return
     }
 
-    let password = await bcrypt.hash(req.body.password, 10);
-    let passwordConfirm = await bcrypt.hash(req.body.passwordConfirm, 10);
+    let salt = await bcrypt.genSalt(10);
+    let password = await bcrypt.hash(req.body.password, salt);
+    let passwordConfirm = await bcrypt.hash(req.body.passwordConfirm, salt);
 
     try {
-        let user = {
-            client_mail: client_mail,
-            mail: mail,
-            password: password,
-            passwordConfirm: passwordConfirm,
-        };
-    
-        // validator.validateAuth(user, res, req, next);
-    
-        let result = await db.createClient(user);
-    
-        if (result.error) {
+        let verif = await db.getClientByMail(mail);
+
+        if (verif.length != 0) {
             res.status(400).json({
                 type: "error",
                 error: 400,
                 message: "L'utilisateur existe déjà"
             });
             return
+        }
+
+        let user = {
+            client_name: client_name,
+            mail: mail,
+            password: password,
+            passwordConfirm: passwordConfirm,
+        };
+    
+        validator.validateAuth(user, res, req, next);
+    
+        let result = await db.createClient(user);
+    
+        if (result.error) {
+            res.status(400).json(result);
+            return
         }  
 
         let jwtSecret = "ceciestun_secretjwt"
 
-        // let token = jwt.sign({ id: result.id }, process.env.JWT_SECRET, {
-            console.log("result: " + result);
-        let token = jwt.sign({ id: result }, jwtSecret, {
-            expiresIn: 86400 // expires in 24 hours
+        let token = jwt.sign({ id: result.id }, jwtSecret, {
+            expiresIn: 3600 // expires in 1 hour
         });
 
-        res.status(200).json({ auth: true, token: token });
+        res.status(200).json({ auth: true, token: token, refresh_token: result.refresh_token });
 
     } catch (error) {
         console.log(error);
