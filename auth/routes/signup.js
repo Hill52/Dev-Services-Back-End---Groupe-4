@@ -40,9 +40,9 @@ router.post("/", async (req, res, next) => {
         let verif = await db.getClientByMail(mail);
 
         if (verif.length != 0) {
-            res.status(400).json({
+            res.status(409).json({
                 type: "error",
-                error: 400,
+                error: 409,
                 message: "L'utilisateur existe déjà"
             });
             return
