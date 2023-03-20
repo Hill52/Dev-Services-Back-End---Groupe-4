@@ -11,28 +11,30 @@ const validator = require("../validator/validator.js");
 router.use(express.json());
 
 router.post("/", async (req, res, next) => {
-    let token = req.headers.authorization.split(' ')[1];
+    let client_name = req.body.client_name;
+    let password = req.body.password;
 
     try {
-        // let result = await db.getClientByToken(token);
-        // if (result.length == 0) {
-        //     res.status(400).json({
-        //         type: "error",
-        //         error: 400,
-        //         message: "L'utilisateur n'existe pas"
-        //     });
-        //     return
-        // }
-        // res.status(200).json({
-        //     type: "success",
-        //     error: 200,
-        //     message: "L'utilisateur existe"
-        // });
+        let result = await db.authentification(client_name, password);
+        if (result == false) {
+            res.status(400).json({
+                type: "error",
+                error: 400,
+                message: "Login ou mot de passe incorrect"
+            });
+            return
+        }
+
+        let jwtSecret = "ceciestun_secretjwt"
+
+        let token = jwt.sign({ id: result.id }, jwtSecret, {
+            expiresIn: 3600 // expires in 1 hour
+        });
 
         res.status(200).json({
-            type: "success",
-            error: 201,
-            message: "L'utilisateur existe"
+            auth: true,
+            token: token,
+            refresh_token: result.refresh_token
         });
     } catch (error) {
         console.log(error);
