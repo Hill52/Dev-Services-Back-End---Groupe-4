@@ -3,7 +3,7 @@ const router = express.Router();
 
 var jwt = require('jsonwebtoken');
 
-const db = require("../validator/validator.js");
+const db = require("../db/client.js");
 
 router.use(express.json());
 
