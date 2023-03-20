@@ -35,7 +35,8 @@ router.get("/", async (req, res, next) => {
         let tokenid = jwt_decode(token).id;
         //Si le token est valide, un code 200 est retourné, accompagné du profil de l'utilisateur authentifié (email, username, level).
 
-        let user = await db.query("SELECT * FROM client WHERE id = $1", [tokenid]);
+        let user = await db.getUser(tokenid);
+        console.log(user);
         if (user.rowCount == 0) {
             res.status(401).json({
                 type: "error",

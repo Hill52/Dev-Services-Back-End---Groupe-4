@@ -32,6 +32,10 @@ async function createClient(client) {
     }
 }
 
+function getUser(id) {
+    return db("client").select("*").where("id", id);
+}
+
 function getClientByToken(token) {
     // tranform token to id
     // return db("client").select("*").where("id", token);
@@ -47,4 +51,5 @@ module.exports = {
     createClient,
     getClientByToken,
     connection,
+    getUser,
 };
