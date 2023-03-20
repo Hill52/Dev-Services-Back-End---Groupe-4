@@ -32,7 +32,7 @@ services:
     #command: npm test
     env_file:
       #définit l'emplacement du fichier de variables d'environnement
-      - .env
+      - dbauth.env
     working_dir: /usr/src/app
     ports:
       - 3000:3000 #associe le port local 3333 au port 3000 du container
