@@ -32,14 +32,22 @@ router.post("/", async (req, res, next) => {
         return
     }
 
-    // let password = await bcrypt.hash(req.body.password, 10);
-    // let passwordConfirm = await bcrypt.hash(req.body.passwordConfirm, 10);
-
     let salt = await bcrypt.genSalt(10);
     let password = await bcrypt.hash(req.body.password, salt);
     let passwordConfirm = await bcrypt.hash(req.body.passwordConfirm, salt);
 
     try {
+        let verif = await db.getClientByMail(mail);
+
+        if (verif.length != 0) {
+            res.status(400).json({
+                type: "error",
+                error: 400,
+                message: "L'utilisateur existe déjà"
+            });
+            return
+        }
+
         let user = {
             client_name: client_name,
             mail: mail,
@@ -52,11 +60,7 @@ router.post("/", async (req, res, next) => {
         let result = await db.createClient(user);
     
         if (result.error) {
-            res.status(400).json({
-                type: "error",
-                error: 400,
-                message: "L'utilisateur existe déjà"
-            });
+            res.status(400).json(result);
             return
         }  
 

@@ -18,6 +18,10 @@ let db = knex({
     },
 });
 
+async function getClientByMail(mail) {
+    return await db("client").select("*").where("mail_client", mail);
+}
+
 async function createClient(client) {
     try {
         let id = uuid();
@@ -37,7 +41,12 @@ async function createClient(client) {
             refresh_token: refresh_token,
         };
     } catch (err) {
-        console.log("erreur" + err);
+        console.log(err);
+        return {
+            error: true,
+            statusCode: 400,
+            message: "Erreur lors de la création de l'utilisateur",
+        };
     }
 }
 
@@ -76,4 +85,5 @@ module.exports = {
     createClient,
     getClientByToken,
     authentification,
+    getClientByMail,
 };
