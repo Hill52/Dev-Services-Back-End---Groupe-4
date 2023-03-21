@@ -1,7 +1,7 @@
 version: '3.9'
 
 services:
-  api:
+  orders:
     image: node:alpine
     # command: npm start #production
     command: npm run watch
@@ -11,10 +11,10 @@ services:
       #définit l'emplacement du fichier de variables d'environnement
       - .env
     working_dir: /usr/src/app
-    ports:
-      - 3333:3000 #associe le port local 3333 au port 3000 du container
+    # ports:
+    #   - 3333:3000 #associe le port local 3333 au port 3000 du container
     volumes:
-      - ./api:/usr/src/app #synchronise le répertoire local ./api avec le répertoire du container /usr/src/app
+      - ./orders:/usr/src/app #synchronise le répertoire local ./api avec le répertoire du container /usr/src/app
     networks:
       - some_network
     links:
@@ -34,8 +34,8 @@ services:
       #définit l'emplacement du fichier de variables d'environnement
       - dbauth.env
     working_dir: /usr/src/app
-    ports:
-      - 3000:3000 #associe le port local 3333 au port 3000 du container
+    # ports:
+    #   - 3000:3000 #associe le port local 3333 au port 3000 du container
     volumes:
       - ./auth:/usr/src/app #synchronise le répertoire local ./api avec le répertoire du container /usr/src/app
     networks:
@@ -46,6 +46,26 @@ services:
       #permet d'organiser le démarrage des services
       mariadb:
         condition: service_healthy #vérifie que le serveur de base de données est prêt et fonctionnel
+
+  gateway:
+    image: node:alpine
+    # command: npm start #production
+    command: npm run watch
+    #command: npm run watch #pour le dévellopement seulement (fonctionne uniquement si Nodemon est installé)
+    #command: npm test
+    env_file:
+      #définit l'emplacement du fichier de variables d'environnement
+      - gateway.env
+    working_dir: /usr/src/app
+    ports:
+      - 3000:3000 #associe le port local 3333 au port 3000 du container
+    volumes:
+      - ./gateway:/usr/src/app #synchronise le répertoire local ./api avec le répertoire du container /usr/src/app
+    networks:
+      - some_network
+    links:
+      - auth
+      - orders
 
   mariadb:
     image: mariadb
