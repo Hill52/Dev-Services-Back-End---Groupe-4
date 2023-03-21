@@ -66,6 +66,7 @@ services:
     links:
       - auth
       - orders
+      - directus
 
   mariadb:
     image: mariadb
@@ -150,8 +151,8 @@ services:
   directus:
     container_name: directus
     image: directus/directus:latest
-    ports:
-      - 8055:8055
+    # ports:
+      # - 8055:8055
     volumes:
         # By default, uploads are stored in /directus/uploads
         # Always make sure your volumes matches the storage root when using

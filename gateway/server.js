@@ -135,6 +135,24 @@ app.post("/orders", async (req, res, next) => {
   }
 })
 
+ // Route Sandwiches directus
+
+app.get("/sandwiches", async (req, res, next) => {
+  let client_name = req.query.c
+  let sort = req.query.sort
+  let page = req.query.page
+
+  try {
+    let url = `http://directus:3000/items/sandwiches/?fields=*.*`
+
+    let response = await axios.get(url);
+
+    res.send(response.data);
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server "gateway" started on port ${port}`);
 });
