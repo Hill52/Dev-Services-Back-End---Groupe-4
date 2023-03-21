@@ -40,11 +40,7 @@ function validateOrder(order, res, req, next) {
 function validateOrderCreate(order, res, req, next) {
     const result = orderCreateSchema.validate(order);
     if (result.error) {
-        res.status(400).json({
-            type: "error",
-            error: 400,
-            message: result.error.details[0].message
-        });
+        next(result.error);
     }
 }
 

@@ -102,6 +102,39 @@ app.get("/orders", async (req, res, next) => {
   }
 });
 
+app.post("/orders", async (req, res, next) => {
+  let client_name = req.body.client_name
+  let client_mail = req.body.client_mail
+  let delivery = {
+    date: req.body.delivery.date,
+    time: req.body.delivery.time,
+  }
+  let items = req.body.items
+
+  items = items == undefined ? [] : items
+
+  let order = {
+    client_name: client_name,
+    client_mail: client_mail,
+    delivery: delivery,
+    items: items,
+  };
+
+  try {
+    let valid = validator.validateOrderCreate(order, res, req, next);
+
+    // console.log("isvalid: " + valid)
+    if (!valid) return;
+    
+    let response = await axios.post("http://orders:3000/orders", order);
+
+    res.send(response.data);
+    // console.log("Order created");
+  } catch (error) {
+    next(error);
+  }
+})
+
 app.listen(port, () => {
   console.log(`Server "gateway" started on port ${port}`);
 });
