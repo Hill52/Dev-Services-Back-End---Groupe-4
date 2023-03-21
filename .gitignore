@@ -8,3 +8,4 @@ orders/package-lock.json
 dbauth.env
 db/
 data/
+api/node_modules/
