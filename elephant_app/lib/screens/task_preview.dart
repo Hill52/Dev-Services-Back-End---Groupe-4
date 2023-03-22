@@ -30,48 +30,22 @@ class _TaskPreviewState extends State<TaskPreview> {
   Widget build(BuildContext context) {
     Color tileColor = widget.task.completed ? Colors.green : Colors.red;
     return Dismissible(
-      key: UniqueKey(),
-      direction: DismissDirection.startToEnd,
+      key: Key(widget.task.id!),
+      direction: DismissDirection.endToStart,
       background: Container(
         color: Colors.red,
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Icon(Icons.delete, color: Colors.white),
-              SizedBox(width: 10),
-              Text(
-                "Delete",
-                style: TextStyle(color: Colors.white, fontSize: 18),
-              ),
-            ],
-          ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Icon(
+              Icons.delete,
+              color: Colors.white,
+            ),
+            SizedBox(width: 16),
+          ],
         ),
       ),
-      confirmDismiss: (DismissDirection direction) async {
-        final bool res = await showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                content: Text(
-                    "Are you sure you want to delete ${widget.task.title}?"),
-                actions: <Widget>[
-                  TextButton(
-                      onPressed: () => Navigator.of(context).pop(true),
-                      child: Text("Delete")),
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(false),
-                    child: Text("Cancel"),
-                  ),
-                ],
-              );
-            });
-        return res;
-      },
-      onDismissed: (direction) {
-        _tasksProvider.deleteTask(widget.task);
-      },
+      onDismissed: (_) => _tasksProvider.deleteTask(widget.task),
       child: ListTile(
         title: Text(widget.task.title ?? "No title"),
         subtitle: Text(widget.task.content),
