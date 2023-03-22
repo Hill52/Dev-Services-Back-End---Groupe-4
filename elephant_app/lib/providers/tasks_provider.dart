@@ -47,16 +47,30 @@ class TasksProvider extends ChangeNotifier {
       print("Error MECCC PROVIDER");
       print(response.status);
     } else {
+      print(_tasks);
       final index = _tasks.indexWhere((t) => t.id == task.id);
+      print(_tasks);
+
       _tasks[index] = task; // Mettre à jour l'état local de la tâche
-      
+
       notifyListeners();
     }
   }
 
-  Future<void> deleteTask(String id) async {}
+  Future<void> deleteTask(Task task) async {
+    final response =
+        await supabase.from("tasks").delete().match({'id': task.id}).execute();
+    if (response.status != 204) {
+      print("Error");
+    } else {
+      print(_tasks);
+      _tasks.remove(task); // Retirer la tâche de la liste _tasks
+      print(_tasks);
 
-  Future<void> completeTask(String id) async {}
+      print("Success");
+      notifyListeners();
+    }
+  }
 
   Future<void> uncompleteTask(String id) async {}
 }

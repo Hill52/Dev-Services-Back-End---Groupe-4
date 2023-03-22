@@ -5,7 +5,6 @@ import 'package:elephant_app/screens/task_details.dart';
 import 'package:elephant_app/providers/tasks_provider.dart';
 import 'package:provider/provider.dart';
 
-
 class TaskPreview extends StatefulWidget {
   final Task task;
 
@@ -41,8 +40,8 @@ class _TaskPreviewState extends State<TaskPreview> {
         value: widget.task.completed,
         onChanged: (bool? value) {
           setState(() {
-            _tasksProvider.updateTask(widget.task);
             widget.task.toggleCompleted();
+            _tasksProvider.updateTask(widget.task);
           });
         },
       ),
@@ -51,4 +50,3 @@ class _TaskPreviewState extends State<TaskPreview> {
     );
   }
 }
-
