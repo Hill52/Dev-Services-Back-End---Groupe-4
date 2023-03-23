@@ -63,10 +63,7 @@ class TasksProvider extends ChangeNotifier {
     if (response.status != 204) {
       print("Error");
     } else {
-      print(_tasks);
       _tasks.remove(task); // Retirer la tâche de la liste _tasks
-      print(_tasks);
-
       print("Success");
       notifyListeners();
     }
