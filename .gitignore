@@ -1,3 +1,4 @@
+.env
 auth/node_modules/
 auth/package-lock.json
 gateway/node_modules/
