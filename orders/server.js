@@ -5,14 +5,12 @@ const port = 3000;
 const app = express();
 
 const orders = require("./routes/orders");
+const sandwichs = require("./routes/sandwichs")
 
 
 app.use("/orders", orders);
-
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
+app.use("/sandwichs", sandwichs);
 
 app.listen(port, () => {
-  console.log(`Server started on port ${port}`);
+  console.log(`Server "api" started on port ${port}`);
 });

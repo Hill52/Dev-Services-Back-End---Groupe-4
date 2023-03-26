@@ -1,6 +1,8 @@
-.env
-api/node_modules/
-api/package-lock.json
-node_modules/
+auth/node_modules/
+auth/package-lock.json
+gateway/node_modules/
+gateway/package-lock.json
+orders/node_modules/
+orders/package-lock.json
+dbauth.env
 db/
-```
