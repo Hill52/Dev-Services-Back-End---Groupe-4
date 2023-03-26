@@ -125,7 +125,7 @@ app.post("/orders", async (req, res, next) => {
 
     // console.log("isvalid: " + valid)
     if (!valid) return;
-    
+
     let response = await axios.post("http://orders:3000/orders", order);
 
     res.send(response.data);
@@ -138,3 +138,26 @@ app.post("/orders", async (req, res, next) => {
 app.listen(port, () => {
   console.log(`Server "gateway" started on port ${port}`);
 });
+
+app.get("/catalogue", async (req, res, next) => {
+  try {
+
+    let response = await axios.get("http://localhost:8055/items/sandwiches/");
+    res.send(response.data);
+
+  } catch (error) {
+    next(error);
+  }
+})
+
+app.get("/catalogue/:sandwichId", async (req, res, next) => {
+  try {
+    let id = req.params.sandwichId;
+
+    let response = await axios.get("http://localhost:8055/items/sandwiches/?fields=*.*&filter[idCategories][_eq]=" + id);
+    res.send(response.data);
+
+  } catch (error) {
+    next(error);
+  }
+})
