@@ -1,18 +1,17 @@
-import 'dart:io';
 
 class Task {
   String? id;
   late String content;
   late bool completed;
   String? title;
-  File? image;
+  late String image;
 
   Task({
     required this.content,
     required this.completed,
     this.title,
     this.id,
-    this.image,
+    required this.image,
   });
 
   void toggleCompleted() {
@@ -27,7 +26,7 @@ class Task {
     data['completed'] = this.completed;
     data['title'] = this.title;
     if (this.image != null) {
-      data['image'] = this.image!.path;
+      data['image'] = this.image;
     }
     return data;
   }
@@ -39,11 +38,11 @@ class Task {
     completed = json['completed'];
     title = json['title'];
     if (json['image'] != null) {
-      image = File(json['image']);
+      image = json['image'] ?? "";
     }
   }
 
-  Task copyWith({String? id, String? content, bool? completed, String? title, File? image}) {
+  Task copyWith({String? id, String? content, bool? completed, String? title, String? image}) {
     return Task(
       id: id ?? this.id,
       content: content ?? this.content,

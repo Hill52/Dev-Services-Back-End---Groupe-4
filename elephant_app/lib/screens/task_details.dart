@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:elephant_app/providers/tasks_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:elephant_app/models/task.dart';
@@ -16,7 +17,7 @@ class TaskDetails extends StatefulWidget {
 class _TaskDetailsState extends State<TaskDetails> {
   late TextEditingController _titleController;
   late TextEditingController _contentController;
-
+  File? _imageFile;
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -24,6 +25,10 @@ class _TaskDetailsState extends State<TaskDetails> {
     super.initState();
     _titleController = TextEditingController(text: widget.task.title);
     _contentController = TextEditingController(text: widget.task.content);
+
+    if (widget.task.image != null) {
+      _imageFile = File(widget.task.image!);
+    }
   }
 
   @override
@@ -78,6 +83,11 @@ return Consumer<TasksProvider>(
                     return null;
                   },
                 ),
+                if (_imageFile != null) ...[
+                  SizedBox(height: 16.0),
+                  Image.file(_imageFile??File(''), height: 300,),
+                ],
+
                 SizedBox(height: 16.0),
                 ElevatedButton(
                   onPressed: () {
@@ -89,6 +99,7 @@ return Consumer<TasksProvider>(
                   },
                   child: Text('Save'),
                 ),
+
               ],
             ),
           ),

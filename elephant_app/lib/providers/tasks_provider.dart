@@ -37,7 +37,7 @@ class TasksProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
-
+  
   Future<void> updateTask(Task task) async {
     final response = await supabase
         .from("tasks")

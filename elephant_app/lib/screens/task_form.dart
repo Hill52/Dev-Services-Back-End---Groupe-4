@@ -24,7 +24,7 @@ class _TaskFormState extends State<TaskForm> {
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
 
-  File? file;
+  late File file;
   bool isFile = false;
 
   void takeImageWithCamera() async {
@@ -59,6 +59,7 @@ class _TaskFormState extends State<TaskForm> {
         title: _titleController.text,
         content: _contentController.text,
         completed: false,
+        image: file.path,
       );
       context.read<TasksProvider>().addTask(task);
       // widget.addTask(task);
@@ -97,6 +98,8 @@ class _TaskFormState extends State<TaskForm> {
                 controller: _contentController,
                 decoration: InputDecoration(labelText: 'Description'),
               ),
+              const SizedBox(height: 16.0),
+
               isFile ? Image.file(file!, height: 300,) :
               Text("Aucune image sélectionnée"),
               const SizedBox(height: 16.0),
